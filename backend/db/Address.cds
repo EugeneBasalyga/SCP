@@ -1,6 +1,6 @@
-using Id from './User';
+using Id from './UniversityGroup';
 
-entity Address {
+entity Address_st {
     key adid : Id;
     stid : Id;
     city : String(100);

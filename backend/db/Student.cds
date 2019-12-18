@@ -1,4 +1,5 @@
-using Id from './User';
+using Id from './UniversityGroup';
+using Address_st from './Address';
 
 entity Student {
     key stid : Id;
@@ -8,5 +9,5 @@ entity Student {
     email: String(100);
     phoneNumber: String(100);
 
-    toAddress : association to one Address on toAddress.stid = stid;
+    toAddress : association to one Address_st on toAddress.stid = stid;
 };

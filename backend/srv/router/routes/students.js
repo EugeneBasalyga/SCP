@@ -18,15 +18,17 @@ module.exports = () => {
 
     app.get("/", async (req, res, next) => {
         const logger = req.loggingContext.getLogger("/Application");
-        logger.info('user get request');
+        logger.info('students get request');
         let tracer = req.loggingContext.getTracer(__filename);
-        tracer.entering("/user", req, res);
+        tracer.entering("/students", req, res);
 
         try {
-            tracer.exiting("/user", "User Get works");
-            res.type("application/json").status(201).send(JSON.stringify({text: "User Get works"}));
+            const db = new dbClass(req.db);
+            const students = await db.selectAll("STUDENT");
+            tracer.exiting("/students", "Students Get works");
+            res.type("application/json").status(201).send(JSON.stringify(students));
         } catch (e) {
-            tracer.catching("/user", e);
+            tracer.catching("/students", e);
             next(e);
         }
     });

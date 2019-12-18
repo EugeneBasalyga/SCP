@@ -1,4 +1,6 @@
 type Id : String(4);
+using Student from './Student';
+
 
 entity UniversityGroup {
     key unid : Id;

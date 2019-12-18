@@ -47,6 +47,17 @@ module.exports = class {
         throw new Error("Internal error");
     }
 
+
+    async selectAll(tableName) {
+        try {
+            const sSql = `SELECT * FROM ${tableName}`;
+            const statement = await this.preparePromisified(sSql);
+            return await this.statementExecPromisified(statement, []);
+        } catch (e) {
+            throw new Error("Error during executing sql: " + sSql + ". Error: " + JSON.stringify(e));
+        }
+    }
+
     async executeUpdate(sSql, aValues) {
         try {
             const statement = await this.preparePromisified(sSql);

@@ -25,7 +25,7 @@ module.exports = function () {
         // addWhereClause(req, getLangClause("EN"));
     });
 
-    this.on("CREATE", "Users", async (User) => {
+    this.on("CREATE", "Students", async (User) => {
         req.log.debug(`ON CREATE ${req.target["@Common.Label"]}`);
 
         const {
@@ -55,7 +55,7 @@ module.exports = function () {
     });
 
 
-    this.after("READ", "Users", (entity) => {
+    this.after("READ", "Students", (entity) => {
         if (entity.length > 0) {
             // entity.forEach(item => item.mandt = "");
             entity.forEach(item => item.name = "");
