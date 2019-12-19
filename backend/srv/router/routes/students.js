@@ -33,37 +33,76 @@ module.exports = () => {
         }
     });
 
-    app.post("/", async (req, res, next) => {
+    app.get("/:stid", async (req, res, next) => {
         try {
             const db = new dbClass(req.db);
+            const stid = req.params.stid;
 
-            const oUser = _prepareObject(req.body, req);
-				    oUser.usid = await db.getNextval("usid");
+            const sSql = "SELECT * FROM \"STUDENT\" WHERE \"STID\" = ?";
+            const aValues = [ stid ];
 
-            const sSql = "INSERT INTO \"USER\" VALUES(?,?)";
-						const aValues = [ oUser.usid, oUser.name ];
+            console.log(aValues);
+            console.log(sSql);
+            const oStudent = await db.executeUpdate(sSql, aValues);
 
-						console.log(aValues);
-						console.log(sSql);
-            await db.executeUpdate(sSql, aValues);
-
-            res.type("application/json").status(201).send(JSON.stringify(oUser));
+            res.type("application/json").status(201).send(JSON.stringify(oStudent));
         } catch (e) {
             next(e);
         }
     });
 
-    app.put("/", async (req, res, next) => {
+    app.post("/", async (req, res, next) => {
         try {
             const db = new dbClass(req.db);
 
-            const oUser = _prepareObject(req.body, req);
-            const sSql = "UPDATE \"USER\" SET \"NAME\" = ? WHERE \"USID\" = ?";
-						const aValues = [ oUser.name, oUser.usid ];
+            const oStudent = _prepareObject(req.body, req);
+            oStudent.stid = await db.getNextval("stid");
+
+            const sSql = "INSERT INTO \"STUDENT\" VALUES(?,?,?,?,?,?)";
+						const aValues = [ oStudent.stid, oStudent.unid, oStudent.name, oStudent.surname, oStudent.email, oStudent.phoneNumber ];
+
+						console.log(aValues);
+						console.log(sSql);
+            await db.executeUpdate(sSql, aValues);
+
+            res.type("application/json").status(201).send(JSON.stringify(oStudent));
+        } catch (e) {
+            next(e);
+        }
+    });
+
+    app.delete("/:stid", async (req, res, next) => {
+        try {
+            const db = new dbClass(req.db);
+            const stid = req.params.stid;
+
+            const sSql = "DELETE FROM \"STUDENT\" WHERE \"STID\" = ?";
+            const aValues = [ stid ];
+
+            console.log(aValues);
+            console.log(sSql);
+            await db.executeUpdate(sSql, aValues);
+
+            res.type("application/json").status(201).send("Success");
+        } catch (e) {
+            next(e);
+        }
+    });
+
+    app.put("/:stid", async (req, res, next) => {
+        try {
+            const db = new dbClass(req.db);
+            const stid = req.params.stid;
+
+            const oStudent = _prepareObject(req.body, req);
+            const sSql = "UPDATE \"STUDENT\" " +
+                "SET \"UNID\" = ?, \"NAME\" = ?, \"SURNAME\" = ?, \"EMAIL\" = ?, \"PHONENUMBER\" = ?" +
+                "WHERE \"STID\" = ?";
+                const aValues = [ oStudent.unid, oStudent.name, oStudent.surname, oStudent.email, oStudent.phoneNumber, stid ];
 
             await db.executeUpdate(sSql, aValues);
 
-            res.type("application/json").status(200).send(JSON.stringify(oUser));
+            res.type("application/json").status(200).send(JSON.stringify(oStudent));
         } catch (e) {
             next(e);
         }
