@@ -102,7 +102,7 @@ module.exports = () => {
 
             await db.executeUpdate(sSql, aValues);
 
-            res.type("application/json").status(200).send(JSON.stringify(oStudent));
+            res.type("application/json").status(200).send("Success");
         } catch (e) {
             next(e);
         }

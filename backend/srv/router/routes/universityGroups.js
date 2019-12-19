@@ -3,75 +3,103 @@
 "use strict";
 
 const express = require("express");
-const cloudServices = require(global.__base + "utils/cloudServices");
+
+const dbClass = require(global.__base + "utils/dbClass");
+//const cloudServices = require(global.__base + "utils/cloudServices");
+
+function _prepareObject(oUser, req) {
+    oUser.changedBy = "DebugUser";
+    return oUser;
+}
+
 
 module.exports = () => {
     const app = express.Router();
 
-		//-----------------GET ALL DESTINATIONS---------------
     app.get("/", async (req, res, next) => {
-        const logger = req.loggingContext.getLogger("/Application");
-
         try {
-            logger.info('Getting onPremise systems');
-            let aOnPremiseSystems = await cloudServices.getOnPremiseSystems();
-            logger.info('onPremise systems received');
-
-            //data contains secure information. So we filter it
-            aOnPremiseSystems = aOnPremiseSystems
-                .map(system => (({Name, Description}) => ({Name, Description}))(system));
-
-            res.type("application/json").status(200).send(JSON.stringify(aOnPremiseSystems));
+            const db = new dbClass(req.db);
+            const unGroups = await db.selectAll("UNIVERSITYGROUP");
+            res.type("application/json").status(201).send(JSON.stringify(unGroups));
         } catch (e) {
             next(e);
         }
     });
 
-
-		//-----------------GET DESTINATION BY NAME---------------
-    app.get("/:syid", async (req, res, next) => {
-        const logger = req.loggingContext.getLogger("/Application");
-
+    app.get("/:unid", async (req, res, next) => {
         try {
-            const syid = req.params.syid;
+            const db = new dbClass(req.db);
+            const unid = req.params.unid;
 
-            logger.info('Getting onPremise system');
-            let oOnPremiseSystem = await cloudServices.getOnPremiseSystemById(syid);
-            logger.info('onPremise system received');
+            const sSql = "SELECT * FROM \"UNIVERSITYGROUP\" WHERE \"UNID\" = ?";
+            const aValues = [ unid ];
 
-/*          Filter by property 
-            if (!oOnPremiseSystem.destinationConfiguration.usage
-                || oOnPremiseSystem.destinationConfiguration.usage.indexOf("pt_system") === -1) {
-                    throw new PTError.API_SystemIsNotForPT([syid]);
-            }
-*/
-            oOnPremiseSystem = {
-                Name: oOnPremiseSystem.destinationConfiguration.Name,
-                Description: oOnPremiseSystem.destinationConfiguration.Description
-            };
+            console.log(aValues);
+            console.log(sSql);
+            const oUnGroup = await db.executeUpdate(sSql, aValues);
 
-            res.type("application/json").status(200).send(JSON.stringify(oOnPremiseSystem));
+            res.type("application/json").status(201).send(JSON.stringify(oUnGroup));
         } catch (e) {
             next(e);
         }
     });
 
-		//-----------------GET DATA FROM On-Premise System---------------
-    app.get("/data/:syid", async (req, res, next) => {
+    app.post("/", async (req, res, next) => {
         try {
-	  			const logger = req.loggingContext.getLogger("/Application");
+            const db = new dbClass(req.db);
 
-    			logger.info('Getting onPremise system');
-    			const oOnPremiseSystem = await cloudServices.getOnPremiseSystemById(syid);
-    			logger.info('onPremise system received');
+            const oUnGroup = _prepareObject(req.body, req);
+            oUnGroup.unid = await db.getNextval("unid");
 
-		    	const oData = await cloudServices.getOnPremiseSystemData(oOnPremiseSystem, "en");
-        	res.type("application/json").status(200).send(JSON.stringify(oData));
+            const sSql = "INSERT INTO \"UNIVERSITYGROUP\" VALUES(?,?,?,?)";
+            const aValues = [ oUnGroup.unid, oUnGroup.name, oUnGroup.studentsCount, oUnGroup.curatorName ];
+
+            console.log(aValues);
+            console.log(sSql);
+            await db.executeUpdate(sSql, aValues);
+
+            res.type("application/json").status(201).send(JSON.stringify(oUnGroup));
         } catch (e) {
             next(e);
         }
-		});
+    });
 
+    app.delete("/:unid", async (req, res, next) => {
+        try {
+            const db = new dbClass(req.db);
+            const unid = req.params.unid;
+
+            const sSql = "DELETE FROM \"UNIVERSITYGROUP\" WHERE \"UNID\" = ?";
+            const aValues = [ unid ];
+
+            console.log(aValues);
+            console.log(sSql);
+            await db.executeUpdate(sSql, aValues);
+
+            res.type("application/json").status(201).send("Success");
+        } catch (e) {
+            next(e);
+        }
+    });
+
+    app.put("/:unid", async (req, res, next) => {
+        try {
+            const db = new dbClass(req.db);
+            const unid = req.params.unid;
+
+            const oUnGroup = _prepareObject(req.body, req);
+            const sSql = "UPDATE \"STUDENT\" " +
+                "SET \"UNID\" = ?, \"NAME\" = ?, \"STUDENTSCOUNT\" = ?, \"CURATORNAME\" = ?" +
+                "WHERE \"STID\" = ?";
+            const aValues = [ oUnGroup.unid, oUnGroup.name, oUnGroup.studentsCount, oUnGroup.curatorName ];
+
+            await db.executeUpdate(sSql, aValues);
+
+            res.type("application/json").status(200).send("Success");
+        } catch (e) {
+            next(e);
+        }
+    });
 
     return app;
 };

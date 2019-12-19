@@ -31,7 +31,7 @@
   "scripts": {
     "postinstall": "node .install.js && cds build/all --project .. --clean",
     "start": "node server.js",
-    "debug": "node server.js --debug",
+    "debug": "nodemon server.js --debug",
     "debugIdea": "node %NODE_DEBUG_OPTION% server.js --debug",
     "build": "cds build/all --clean"
   },
@@ -45,5 +45,8 @@
     "data": {
       "driver": "hana"
     }
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
