@@ -19,7 +19,8 @@ module.exports = () => {
     app.get("/", async (req, res, next) => {
         try {
             const db = new dbClass(req.db);
-            const unGroups = await db.selectAll("UNIVERSITYGROUP");
+            const sSql = "SELECT * FROM \"UNIVERSITYGROUP\"";
+            const unGroups = await db.executeQuery(sSql, []);
             res.type("application/json").status(201).send(JSON.stringify(unGroups));
         } catch (e) {
             next(e);
@@ -36,7 +37,7 @@ module.exports = () => {
 
             console.log(aValues);
             console.log(sSql);
-            const oUnGroup = await db.executeUpdate(sSql, aValues);
+            const oUnGroup = await db.executeQuery(sSql, aValues);
 
             res.type("application/json").status(201).send(JSON.stringify(oUnGroup));
         } catch (e) {

@@ -24,7 +24,8 @@ module.exports = () => {
 
         try {
             const db = new dbClass(req.db);
-            const students = await db.selectAll("STUDENT");
+            const sSql = "SELECT * FROM \"STUDENT\"";
+            const students = await db.executeQuery(sSql, []);
             tracer.exiting("/students", "Students Get works");
             res.type("application/json").status(201).send(JSON.stringify(students));
         } catch (e) {
@@ -43,7 +44,7 @@ module.exports = () => {
 
             console.log(aValues);
             console.log(sSql);
-            const oStudent = await db.executeUpdate(sSql, aValues);
+            const oStudent = await db.executeQuery(sSql, aValues);
 
             res.type("application/json").status(201).send(JSON.stringify(oStudent));
         } catch (e) {

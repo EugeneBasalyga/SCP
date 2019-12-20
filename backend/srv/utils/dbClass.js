@@ -48,11 +48,10 @@ module.exports = class {
     }
 
 
-    async selectAll(tableName) {
+    async executeQuery(sSql, aValues) {
         try {
-            const sSql = `SELECT * FROM ${tableName}`;
             const statement = await this.preparePromisified(sSql);
-            return await this.statementExecPromisified(statement, []);
+            return await this.statementExecPromisified(statement, aValues);
         } catch (e) {
             throw new Error("Error during executing sql: " + sSql + ". Error: " + JSON.stringify(e));
         }
