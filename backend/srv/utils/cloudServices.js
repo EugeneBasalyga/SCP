@@ -6,32 +6,32 @@ const request = require('request-promise');
 const xsenv = require("@sap/xsenv");
 
 //begin----------GETTING CONFIGURATIONS-------------
-const pt_uaa = xsenv.getServices({
+const zbas_uaa = xsenv.getServices({
     xsuaa: {
         tag: "xsuaa"
     }
 }).xsuaa;
 
-const pt_conn = xsenv.getServices({
+const zbas_conn = xsenv.getServices({
     conn: {
         tag: "connectivity"
     }
 }).conn;
 
-const pt_dest = xsenv.getServices({
+const zbas_dest = xsenv.getServices({
     dest: {
         tag: "destination"
     }
 }).dest;
 
-const sUaaUrl = pt_uaa.url;
+const sUaaUrl = zbas_uaa.url;
 
-const sConnProxy = `http://${pt_conn.onpremise_proxy_host}:${pt_conn.onpremise_proxy_port}`;
-const sConnSecret = `${pt_conn.clientid}:${pt_conn.clientsecret}`;
+const sConnProxy = `http://${zbas_conn.onpremise_proxy_host}:${zbas_conn.onpremise_proxy_port}`;
+const sConnSecret = `${zbas_conn.clientid}:${zbas_conn.clientsecret}`;
 const sConnCredentials = Buffer.from(sConnSecret).toString('base64');
 
-const sDestUrl = pt_dest.url;
-const sDestSecret = `${pt_dest.clientid}:${pt_dest.clientsecret}`;
+const sDestUrl = zbas_dest.url;
+const sDestSecret = `${zbas_dest.clientid}:${zbas_dest.clientsecret}`;
 const sDestCredentials = Buffer.from(sDestSecret).toString('base64');
 //end----------GETTING CONFIGURATIONS-------------
 
@@ -63,10 +63,10 @@ const getUaaToken = async (sCredentials, clientId) => {
 
 //begin----------GET LIST OF ON PREMISE SYSTEMS DEFINED IN CLOUD-------------
 const getOnPremiseSystems = async () => {
-    const sDestAccessToken = (await getUaaToken(sDestCredentials, pt_dest.clientid)).access_token;
+    const sDestAccessToken = (await getUaaToken(sDestCredentials, zbas_dest.clientid)).access_token;
 
     const oRequestOptions = {
-        url: `${pt_dest.uri}/destination-configuration/v1/subaccountDestinations`,
+        url: `${zbas_dest.uri}/destination-configuration/v1/subaccountDestinations`,
         headers: {
             'Authorization': 'Bearer ' + sDestAccessToken
         }
@@ -79,10 +79,10 @@ const getOnPremiseSystems = async () => {
 
 //begin----------GET ON PREMISE SYSTEMS DEFINED IN CLOUD BY ID-------------
 const getOnPremiseSystemById = async systemId => {
-    const sDestAccessToken = (await getUaaToken(sDestCredentials, pt_dest.clientid)).access_token;
+    const sDestAccessToken = (await getUaaToken(sDestCredentials, zbas_dest.clientid)).access_token;
 
     const oRequestOptions = {
-        url: `${pt_dest.uri}/destination-configuration/v1/destinations/${systemId}`,
+        url: `${zbas_dest.uri}/destination-configuration/v1/destinations/${systemId}`,
         headers: {
             'Authorization': 'Bearer ' + sDestAccessToken
         }
@@ -99,15 +99,13 @@ const getOnPremiseSystemData = async (onPremiseSystem, sLang) => {
         throw new Error("Error");
     }
 
-    const sConnAccessToken = (await getUaaToken(sConnCredentials, pt_conn.clientid)).access_token;
+    const sConnAccessToken = (await getUaaToken(sConnCredentials, zbas_conn.clientid)).access_token;
 
     const sEndpoint = onPremiseSystem.destinationConfiguration.URL +
 //-----------change code here to get another data
-        "/sap/opu/odata/sap/MM_PUR_PO_MAINT_V2_SRV/C_MM_PaymentTermValueHelp" +
+        "/sap/opu/odata/sap/ZLX_CC_GW_EXAMPLE_SRV/CarSet" +
         "?sap-language=" + sLang.toLowerCase() +
-        "&$format=json" +
-        "&$select=PaymentTerms,PaymentTermsName,NetPaymentDays" +
-        "&$orderby=PaymentTerms,NetPaymentDays";
+        "&$format=json";
 
     const oRequestOptions = {
         url: sEndpoint,
@@ -116,7 +114,7 @@ const getOnPremiseSystemData = async (onPremiseSystem, sLang) => {
             'Proxy-Authorization': 'Bearer ' + sConnAccessToken,
             'Authorization': `${onPremiseSystem.authTokens[0].type} ${onPremiseSystem.authTokens[0].value}`
         },
-        proxy: sConnProxy
+        //proxy: sConnProxy
     };
 
     return JSON.parse(await request(oRequestOptions));
