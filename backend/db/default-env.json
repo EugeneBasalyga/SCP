@@ -14,17 +14,17 @@
         "instance_name": "lev_hdi",
         "binding_name": null,
         "credentials": {
-          "host": "zeus.hana.prod.eu-central-1.whitney.dbaas.ondemand.com",
-          "port": "23803",
           "encrypt": true,
           "sslValidateCertificate": false,
           "driver": "com.sap.db.jdbc.Driver",
-          "url": "jdbc:sap://zeus.hana.prod.eu-central-1.whitney.dbaas.ondemand.com:23803?encrypt=true&validateCertificate=true&currentschema=BAS_SCP",
+          "hdi_password": "Wt1tLrM0V9iA.dhHsMkrBwcbDPuoh1H2hvdG3_QT7jsbhVRxD-ToxEzaT-qVXkvYeyTS0EGxSOb_g8G7p28LGJco8If-I3wVOvo3EEpNC8xmPeak1xM6l_r5gRaZj1BM",
+          "hdi_user": "BAS_SCP_B5DFBNDRGGC4ZFKXBCVZSNLIH_DT",
+          "host": "zeus.hana.prod.eu-central-1.whitney.dbaas.ondemand.com",
+          "password": "Qr1w4vIhXRJMohpLSs2gynJ6CXBHZ-bu9SuThzrd6CjkXoxNnM-kSow1JgalJji.I7.hy5G1KYbqKFSQ.216HXQE4wgocke2SLh9jDp9uRXX2uW97r9Qw2qDwzQiwXyC",
+          "port": "23803",
           "schema": "BAS_SCP",
-          "hdi_user": "BAS_SCP_0PUTX0D9I5FVSY946JWAVWKZM_DT",
-          "hdi_password": "Zo6hj.KK7WvlSanr30VAyRBJHgJEB09gvPfihRO7f.2.qeCxMImZPZSM6wvU28.I4qqvQAoql0gHmvDY7uxJpc3z2Ap-yjOvVtfe_xufXez3-Aj8OARIHH.7jFC6yKQy",
-          "user": "BAS_SCP_0PUTX0D9I5FVSY946JWAVWKZM_RT",
-          "password": "Nd4gPmMU-9Aobc.t2qV.QcGSyRPvclZZNL3INWcLZ78JygKJVgIVeO_1bUOCvi3Xd1DQz_zKtcrze_Mvsa8dvJmq6aBYZWNplzsJ-rAXz1oniezndGzdybnZdNcj7hUI"
+          "url": "jdbc:sap://zeus.hana.prod.eu-central-1.whitney.dbaas.ondemand.com:23803?encrypt=true\u0026validateCertificate=true\u0026currentschema=BAS_SCP",
+          "user": "BAS_SCP_B5DFBNDRGGC4ZFKXBCVZSNLIH_RT"
         },
         "syslog_drain_url": null,
         "volume_mounts": []

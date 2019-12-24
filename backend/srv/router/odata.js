@@ -11,19 +11,17 @@ const addWhereClause = (req, aWhere) => {
         aWhere;
 
 };
-const getCompanyClause = sCompany => [{ref: ["mandt"]}, "=", {val: sCompany}];
+const getStudentIdClause = sStId => [{ref: ["stid"]}, ">", {val: sStId}];
 const getLangClause = sLang => [{ref: ["lang"]}, "=", {val: sLang}];
 
 module.exports = function () {
-    this.before("READ", req => {
-        req.log.debug(`BEFORE_READ ${req.target["@Common.Label"]}`);
-
-        //restrict by mandt
-        // addWhereClause(req, getCompanyClause("LeverX"));
-
-        //restrict by lang
-        // addWhereClause(req, getLangClause("EN"));
-    });
+    // this.before("READ", req => {
+    //     req.log.debug(`BEFORE_READ ${req.target["@Common.Label"]}`);
+    //
+    //
+    //     //restrict by lang
+    //     // addWhereClause(req, getLangClause("EN"));
+    // });
 
     this.on("CREATE", "Students", async (User) => {
         req.log.debug(`ON CREATE ${req.target["@Common.Label"]}`);
@@ -55,11 +53,8 @@ module.exports = function () {
     });
 
 
-    this.after("READ", "Students", (entity) => {
-        if (entity.length > 0) {
-            // entity.forEach(item => item.mandt = "");
-            entity.forEach(item => item.name = "");
-        }
+    this.before("READ", "Students", req => {
+        addWhereClause(req, getStudentIdClause("0"));
     });
 
 };

@@ -56,7 +56,7 @@ module.exports = () => {
         try {
             const db = new dbClass(req.db);
 
-            const oStudent = _prepareObject(req.body, req);
+            const oAddress = _prepareObject(req.body, req);
             oAddress.adid = await db.getNextval("adid");
 
             const sSql = "INSERT INTO \"ADDRESS_ST\" VALUES(?,?,?,?,?,?)";

@@ -114,7 +114,7 @@ const getOnPremiseSystemData = async (onPremiseSystem, sLang) => {
             'Proxy-Authorization': 'Bearer ' + sConnAccessToken,
             'Authorization': `${onPremiseSystem.authTokens[0].type} ${onPremiseSystem.authTokens[0].value}`
         },
-        //proxy: sConnProxy
+        proxy: sConnProxy
     };
 
     return JSON.parse(await request(oRequestOptions));
