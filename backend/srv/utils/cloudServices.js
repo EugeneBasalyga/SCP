@@ -102,7 +102,7 @@ const getOnPremiseSystemData = async (onPremiseSystem, sLang) => {
     const sConnAccessToken = (await getUaaToken(sConnCredentials, zbas_conn.clientid)).access_token;
 
     const sEndpoint = onPremiseSystem.destinationConfiguration.URL +
-//-----------change code here to get another data
+        //S4G
         "/sap/opu/odata/sap/ZLX_CC_GW_EXAMPLE_SRV/CarSet" +
         "?sap-language=" + sLang.toLowerCase() +
         "&$format=json";
